@@ -1,17 +1,19 @@
 import random
 import mysql.connector
 
+# Database connection details
 Host = "localhost"
 username = "root"
 password = "Admin"
 database = "movie"
 
+# Establishing a connection to the MySQL database
 conn = mysql.connector.connect(
     host=Host, user=username, password=password, database=database
 )
 cursor = conn.cursor()
 
-
+# Function to get user's preferred movie genre
 def get_genre():
     available_genres = [
         "action",
@@ -30,25 +32,25 @@ def get_genre():
         "family",
     ]
     while True:
-        print("select gena according to your mood..")
+        print("Select a genre according to your mood:")
         print(
-            "Available gena are\n1. Action \t2. Romance \t3. Thriller \t\t4. Comedy \n5. Fantasy \t6. Horror \t7. Science Fiction \t8. Historical \n9. Mystery \t10. Musical \t11. Animation \t\t12. War \n13. Adventure \t14. Family\n"
+            "Available genres:\n1. Action \t2. Romance \t3. Thriller \t\t4. Comedy \n5. Fantasy \t6. Horror \t7. Science Fiction \t8. Historical \n9. Mystery \t10. Musical \t11. Animation \t\t12. War \n13. Adventure \t14. Family\n"
         )
-        genre = input(" : ").lower()
+        genre = input("Enter the number or name of the genre: ").lower()
         if genre in available_genres:
             return genre
         else:
-            print("you write something wrong choose again\n")
+            print("Invalid input. Please choose again.\n")
             continue
 
-
+# Function to fetch movies based on the selected genre
 def get_movies(genre: str):
     query = f"SELECT * FROM {genre}_movies"
     cursor.execute(query)
     movies = cursor.fetchall()
     return movies
 
-
+# Function to provide a random movie recommendation
 def random_suggestion(movies):
     while True:
         movie = random.choice(movies)
@@ -61,26 +63,26 @@ def random_suggestion(movies):
         print("=====================================================\n")
         while True:
             another_recommendation = input(
-                "Need another recommendation (y/n) :"
+                "Need another recommendation (y/n): "
             ).lower()
             if another_recommendation == "n":
                 return None
             elif another_recommendation == "y":
                 break
             else:
-                print("Wrong option...")
+                print("Invalid option. Please enter 'y' or 'n'.")
                 continue
 
-
+# Function to display movies based on user preferences
 def display_movies(movies):
     while True:
-        random_Y_N = input("Want to get random recommendation (y/n) : ").lower()
+        random_Y_N = input("Want to get a random recommendation (y/n): ").lower()
         if random_Y_N == "y":
             random_suggestion(movies=movies)
             break
         elif random_Y_N == "n":
             num_recommendation = input(
-                "How may recommendation you want:  \n Enter all to get full recommendation : "
+                "How many recommendations do you want? Enter 'all' for all recommendations: "
             )
             if num_recommendation.lower() == "all":
                 for movie in movies:
@@ -100,16 +102,15 @@ def display_movies(movies):
                     print("=====================================================\n")
                 break
             except ValueError as e:
-                print(f"Error : {e}")
-
+                print(f"Error: {e}")
         else:
-            print("You Enter something wrong try again...")
+            print("Invalid input. Please enter 'y' or 'n'.")
 
-
+# Main function to execute the program
 def main():
     genre: str = get_genre()
     movies: list = get_movies(genre)
     display_movies(movies)
 
-
+# Calling the main function to start the program
 main()
